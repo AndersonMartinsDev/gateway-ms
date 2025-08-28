@@ -1,9 +1,9 @@
 package main
 
 import (
-	"gateway-ms/internal/application/handler"
-	"gateway-ms/internal/application/service"
+	"gateway-ms/cmd"
 	"gateway-ms/internal/infrastructure/configuration"
+	"gateway-ms/internal/infrastructure/grpc_client"
 	"gateway-ms/internal/infrastructure/http_server"
 	"log/slog"
 )
@@ -11,21 +11,22 @@ import (
 func main() {
 	configuration.LoadEnv()
 	configuration.LoadLogger()
+	configuration.LoadDatabase()
 
-	userService := service.NewUserService()
-	userHandler := handler.NewUserHandler(userService)
+	router_compose := cmd.NewRouterCompose()
+	webHookProcessorMSgrpcConn := grpc_client.GrcpConnection(router_compose.WebhookPrMsURL)
 
-	authService := service.NewAuthService()
-	authHandler := handler.NewAuthHandler(authService)
+	defer webHookProcessorMSgrpcConn.Close()
+
+	userHandle := router_compose.HandlerUserConfiguration()
+	authHandle := router_compose.HandlerAuthConfiguration()
+	webhookHandle := router_compose.HandlerWebhookConfiguration(webHookProcessorMSgrpcConn)
 
 	var routes []http_server.RouterInterface
-	routes = append(routes, http_server.NewUserRoute(*userHandler))
-	routes = append(routes, http_server.NewAuthRoute(*authHandler))
+	routes = append(routes, http_server.NewUserRoute(*userHandle))
+	routes = append(routes, http_server.NewAuthRoute(*authHandle))
+	routes = append(routes, http_server.NewWebHookRoute(*webhookHandle))
 	slog.Info("Rotas HTTP registradas com sucesso!")
 
-	routerHandles := http_server.NewRouters(routes)
-
-	configuration.LoadDatabase()
-	configuration.LoadServer(routerHandles)
-
+	configuration.LoadServer(http_server.NewRouters(routes))
 }
