@@ -9,12 +9,14 @@ import (
 )
 
 type RouterCompose struct {
-	WebhookPrMsURL string
+	WebhookPrMsURL  string
+	AgentModelMsURL string
 }
 
 func NewRouterCompose() *RouterCompose {
 	return &RouterCompose{
-		WebhookPrMsURL: "localhost:50051",
+		WebhookPrMsURL:  "localhost:50051",
+		AgentModelMsURL: "localhost:50052",
 	}
 }
 
@@ -32,4 +34,11 @@ func (manager RouterCompose) HandlerAuthConfiguration() *handler.AuthHandler {
 func (manager RouterCompose) HandlerUserConfiguration() *handler.UserHandler {
 	userService := service.NewUserService()
 	return handler.NewUserHandler(userService)
+}
+
+func (manager RouterCompose) HandlerAgentModelConfiguration(grpcConn *grpc.ClientConn) *handler.AgentModelHandler {
+	agentClient := grpc_client.NewAgentModelClient(grpcConn)
+	modelClient := grpc_client.NewModelClient(grpcConn)
+	agentModelService := service.NewAgentModelService(agentClient, modelClient)
+	return handler.NewAgentModelHandler(agentModelService)
 }
