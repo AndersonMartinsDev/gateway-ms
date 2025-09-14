@@ -2,23 +2,37 @@ package service
 
 import (
 	"context"
-	"gateway-ms/internal/domain/gateway"
-	"gateway-ms/proto"
+	"gateway-ms/internal/domain/message"
+	"log/slog"
 )
 
 // WebhookService orquestra o processamento do webhook.
 type WebhookService struct {
-	client gateway.WebhookProcessorClient
+	publisher message.MessagePublisher
 }
 
 // NewWebhookService cria uma nova instância de WebhookService.
-func NewWebhookService(client gateway.WebhookProcessorClient) *WebhookService {
+func NewWebhookService(publisher message.MessagePublisher) *WebhookService {
 	return &WebhookService{
-		client: client,
+		publisher: publisher,
 	}
 }
 
-// Process recebe o request e delega a chamada para o cliente.
-func (s *WebhookService) Process(ctx context.Context, req *proto.ProcessWebhookRequest) (*proto.ProcessWebhookResponse, error) {
-	return s.client.ProcessWebhook(ctx, req)
+// ProcessWebhook recebe o payload bruto do webhook
+// e o publica em uma fila para processamento assíncrono.
+func (s *WebhookService) ProcessWebhook(ctx context.Context, payload []byte) error {
+	slog.Info("Recebido novo webhook, publicando na fila...")
+
+	// O nome da fila deve ser o mesmo que o consumidor no webhook-processor-ms está ouvindo.
+	queueName := "whatsapp-webhooks-raw"
+
+	// O publisher injetado é usado para enviar a mensagem.
+	err := s.publisher.Publish(ctx, queueName, payload)
+	if err != nil {
+		slog.Error("Falha ao publicar webhook na fila", "error", err, "queue", queueName)
+		return err
+	}
+
+	slog.Info("Webhook publicado com sucesso na fila", "queue", queueName)
+	return nil
 }
