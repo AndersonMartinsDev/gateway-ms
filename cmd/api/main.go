@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	configuration.LoadEnv()
+	// configuration.LoadEnv()
 	configuration.LoadLogger()
 	configuration.LoadDatabase()
 
@@ -24,22 +24,26 @@ func main() {
 	}
 	webHookProcessorMSgrpcConn := grpc_client.GrcpConnection(router_compose.WebhookPrMsURL)
 	agentModelMSgrpcConn := grpc_client.GrcpConnection(router_compose.AgentModelMsURL)
+	whatsappPfGrpcConn := grpc_client.GrcpConnection(router_compose.WhastAppPFUrl)
 
 	userHandle := router_compose.HandlerUserConfiguration()
 	authHandle := router_compose.HandlerAuthConfiguration()
 	webhookHandle := router_compose.HandlerWebhookConfiguration(conn, webHookProcessorMSgrpcConn)
 	agentModelHandler := router_compose.HandlerAgentModelConfiguration(agentModelMSgrpcConn)
+	whatsappPfHandler := router_compose.HandlerWhatsappPFConfiguration(whatsappPfGrpcConn)
 
 	var routes []http_server.RouterInterface
 	routes = append(routes, http_server.NewUserRoute(*userHandle))
 	routes = append(routes, http_server.NewAuthRoute(*authHandle))
 	routes = append(routes, http_server.NewWebHookRoute(*webhookHandle))
 	routes = append(routes, http_server.NewAgentModelRoute(*agentModelHandler))
+	routes = append(routes, http_server.NewWhatsAppPFRoute(*whatsappPfHandler))
 	slog.Info("Rotas HTTP registradas com sucesso!")
 
+	configuration.LoadServer(http_server.NewRouters(routes))
 	defer conn.Close()
 	defer webHookProcessorMSgrpcConn.Close()
 	defer agentModelMSgrpcConn.Close()
-	configuration.LoadServer(http_server.NewRouters(routes))
+	defer whatsappPfGrpcConn.Close()
 
 }

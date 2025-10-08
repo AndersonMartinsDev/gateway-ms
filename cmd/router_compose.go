@@ -15,6 +15,7 @@ import (
 type RouterCompose struct {
 	WebhookPrMsURL  string
 	AgentModelMsURL string
+	WhastAppPFUrl   string
 	RabbitMQURL     string
 }
 
@@ -22,8 +23,14 @@ func NewRouterCompose() *RouterCompose {
 	return &RouterCompose{
 		WebhookPrMsURL:  os.Getenv("WEBHOOK_PROCESSOR_MS_URL"),
 		AgentModelMsURL: os.Getenv("AGENT_MODEL_MS_URL"),
+		WhastAppPFUrl:   os.Getenv("WHATSAPP_PF_URL"),
 		RabbitMQURL:     os.Getenv("RABBITMQ_URL"),
 	}
+}
+
+func (manager RouterCompose) HandlerWhatsappPFConfiguration(grpcConn *grpc.ClientConn) *handler.WhatsappPFHandler {
+	service := service.NewWhatsAppPFService(grpc_client.NewWhatsappPFClient(grpcConn))
+	return handler.NewWhatsappPFHandler(service)
 }
 
 func (manager RouterCompose) HandlerWebhookConfiguration(conn *amqp.Connection, grpcConn *grpc.ClientConn) *handler.WebhookHandler {

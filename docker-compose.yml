@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  gateway-ms:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gateway-ms
+    restart: on-failure
+    ports:
+      - "8080:8080" # Expõe a porta do gateway para o host
+    environment:
+      APPLICATION_NAME: gateway-ms
+      DATABASE_NAME: gtms_database
+      DATABASE_HOST: 146.235.42.19
+      DATABASE_PORT: 5432
+      DATABASE_USER: root
+      DATABASE_PASSWORD: root
+
+      SECRET_KEY: VS_3zaqZyL8pgJSiKqINkNTBcRn88Br7wA2eOLxTwQo
+
+      WEBHOOK_PROCESSOR_MS_URL: webhook-processor-ms:50051
+      AGENT_MODEL_MS_URL: agent-model-ms:50052
+      RABBITMQ_URL: amqp://rabbitmq:root@lead-docker.duckdns.org:5672/
+    networks:
+      - internal-judite
+networks:
+  internal-judite:
+    driver: bridge

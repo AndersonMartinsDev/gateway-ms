@@ -24,7 +24,7 @@ func (s *WebhookService) ProcessWebhook(ctx context.Context, payload []byte) err
 	slog.Info("Recebido novo webhook, publicando na fila...")
 
 	// O nome da fila deve ser o mesmo que o consumidor no webhook-processor-ms está ouvindo.
-	queueName := "whatsapp-webhooks-raw"
+	queueName := "whatsapp-webhooks-pf-raw"
 
 	// O publisher injetado é usado para enviar a mensagem.
 	err := s.publisher.Publish(ctx, queueName, payload)
