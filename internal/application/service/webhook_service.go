@@ -20,11 +20,15 @@ func NewWebhookService(publisher message.MessagePublisher) *WebhookService {
 
 // ProcessWebhook recebe o payload bruto do webhook
 // e o publica em uma fila para processamento assíncrono.
-func (s *WebhookService) ProcessWebhook(ctx context.Context, payload []byte) error {
+func (s *WebhookService) ProcessWebhook(ctx context.Context, origin string, payload []byte) error {
 	slog.Info("Recebido novo webhook, publicando na fila...")
 
 	// O nome da fila deve ser o mesmo que o consumidor no webhook-processor-ms está ouvindo.
 	queueName := "whatsapp-webhooks-pf-raw"
+
+	if origin == "META_WPPB" {
+		queueName = "whatsapp-webhooks-pj-raw"
+	}
 
 	// O publisher injetado é usado para enviar a mensagem.
 	err := s.publisher.Publish(ctx, queueName, payload)

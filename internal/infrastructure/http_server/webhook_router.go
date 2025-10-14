@@ -19,7 +19,7 @@ func NewWebHookRoute(userHandle handler.WebhookHandler) *WebHookRoute {
 func (route WebHookRoute) getRoutersModel() []model.RouteModel {
 	return []model.RouteModel{
 		{
-			URI:              "/whatsapp-pf",
+			URI:              "/whatsapp",
 			Method:           http.MethodPost,
 			Func:             route.Handler.HandleWebhook,
 			HasAuthenticated: false,

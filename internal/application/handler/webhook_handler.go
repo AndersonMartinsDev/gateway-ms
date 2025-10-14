@@ -26,8 +26,9 @@ func (handler WebhookHandler) HandleWebhook(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	originRequest := r.Header.Get("X-WEBH-ORIGIN")
 	// Chama o método do serviço para processar e publicar o webhook
-	if err := handler.webhookService.ProcessWebhook(r.Context(), body); err != nil {
+	if err := handler.webhookService.ProcessWebhook(r.Context(), originRequest, body); err != nil {
 		response.Erro(w, http.StatusInternalServerError, err)
 		return
 	}
