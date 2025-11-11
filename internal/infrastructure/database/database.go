@@ -87,8 +87,8 @@ func InitalStrucuture() {
 
 	// Criar uma Variável de ambiente para facilitar esse mapeamento ou mudar isso no dockerfile'
 	m, err := migrate.NewWithDatabaseInstance(
-		"file://migrations", // Use o caminho que funciona para você após o COPY do Dockerfile
-		DB_NAME,             // Use DB_NAME aqui
+		"file://cmd/api/migrations", // Use o caminho que funciona para você após o COPY do Dockerfile
+		DB_NAME,                     // Use DB_NAME aqui
 		driver,
 	)
 	if err != nil {

@@ -21,9 +21,13 @@ func LoadEnv() {
 	if erro := godotenv.Load(); erro != nil {
 		panic("Error ao carregar as variáveis de ambiente!")
 	}
-	security.GetSecretKeyConfig(os.Getenv("SECRET_KEY"))
-	Origin = os.Getenv("ORIGINS")
+
 	slog.Info("Variáveis de ambiente carregadas com sucesso!")
+}
+
+func GetMainEnvs() {
+	security.GetSecretKeyConfig(GetSecret("SECRET_KEY"))
+	Origin = os.Getenv("ORIGINS")
 }
 
 // LoadLogger apenas para carregar logs personalizados
@@ -44,8 +48,8 @@ func LoadDatabase() {
 	db_name, _ := os.LookupEnv("DATABASE_NAME")
 	db_host := os.Getenv("DATABASE_HOST")
 	db_port := os.Getenv("DATABASE_PORT")
-	db_user := os.Getenv("DATABASE_USER")
-	db_password := os.Getenv("DATABASE_PASSWORD")
+	db_user := GetSecret("DATABASE_USER")
+	db_password := GetSecret("DATABASE_PASSWORD")
 
 	database.SetDatabaseEnv(db_name, db_host, db_port, db_user, db_password)
 

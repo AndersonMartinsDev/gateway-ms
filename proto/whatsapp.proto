@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package whatsapp;
+
+option go_package = "whatsapp-client-ms/proto";
+
+service WhatsappService {
+  rpc GenerateQRCode (GenerateQRCodeRequest) returns (GenerateQRCodeResponse) {}
+}
+
+message GenerateQRCodeRequest {
+  string phoneNumber = 1;
+}
+
+message GenerateQRCodeResponse {
+  string qr_code = 1;
+}

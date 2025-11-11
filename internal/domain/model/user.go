@@ -13,7 +13,7 @@ type User struct {
 	UUID     uuid.UUID `json:"id"`
 	Name     string    `json:"name"`
 	Username string    `json:"username"`
-	Password string    `json:"password,omitempty"`
+	Password string    `json:"password"`
 	Email    string    `json:"email,omitempty"`
 }
 

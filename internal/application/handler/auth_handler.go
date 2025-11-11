@@ -9,7 +9,6 @@ import (
 )
 
 // UserHandler é o handler HTTP para as requisições de usuário.
-// Ele recebe o serviço de usuário por injeção de dependência.
 type AuthHandler struct {
 	service *service.AuthService
 }
