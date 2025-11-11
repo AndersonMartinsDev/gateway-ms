@@ -4,6 +4,7 @@ import (
 	"context"
 	"gateway-ms/internal/domain/model"
 	proto "gateway-ms/proto"
+	"strconv"
 )
 
 type AgentModelService interface {
@@ -14,6 +15,7 @@ type AgentModelService interface {
 	UpdateAgentAI(ctx context.Context, agent model.AIAgent) (string, error)
 	CreatePerfilModel(ctx context.Context, model model.ModelIA) (string, error)
 	GetPerfilModels(ctx context.Context) ([]*proto.AIModel, error)
+	GetBehaviorAgentIa(ctx context.Context) (map[int32]string, error)
 }
 
 // AgentModelServiceImpl local orquestra as chamadas para os microserviços de agentes e modelos.
@@ -39,8 +41,9 @@ func (s *AgentModelServiceImpl) ListAgents(ctx context.Context, userUUID string)
 	return res.Agents, nil
 }
 func (s *AgentModelServiceImpl) GetAgent(ctx context.Context, agentID, userUUID string) (*proto.Agent, error) {
+	agent_id, _ := strconv.ParseUint(agentID, 10, 64)
 	req := &proto.GetAgentRequest{
-		Id:       agentID,
+		Id:       agent_id,
 		UuidUser: userUUID,
 	}
 	res, err := s.agentClient.GetAgent(ctx, req)
@@ -116,4 +119,14 @@ func (s *AgentModelServiceImpl) GetPerfilModels(ctx context.Context) ([]*proto.A
 		return []*proto.AIModel{}, err
 	}
 	return res.Models, nil
+}
+
+func (s *AgentModelServiceImpl) GetBehaviorAgentIa(ctx context.Context) (map[int32]string, error) {
+
+	res, err := s.agentClient.GetBehaviorAgentIa(ctx, &proto.GetBehaviorAgentIaRequest{})
+	if err != nil {
+		return nil, err
+	}
+	return res.Comportamentos, nil
+
 }

@@ -14,6 +14,7 @@ import (
 func main() {
 	// configuration.LoadEnv()
 	configuration.LoadLogger()
+	configuration.GetMainEnvs()
 	configuration.LoadDatabase()
 
 	router_compose := cmd.NewRouterCompose()

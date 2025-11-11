@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package agent;
+package proto;
 
-option go_package = "seu-projeto/proto";
+option go_package = "gateway-ms/proto";
 
 service AIAgentService {
   rpc CreateAgent(CreateAgentRequest) returns (CreateAgentResponse);
@@ -10,6 +10,13 @@ service AIAgentService {
   rpc GetAgent(GetAgentRequest) returns (GetAgentResponse);
   rpc ListAgents(ListAgentsRequest) returns (ListAgentsResponse);
   rpc DeleteAgent(DeleteAgentRequest) returns (DeleteAgentResponse);
+  rpc GetBehaviorAgentIa (GetBehaviorAgentIaRequest) returns (GetBehaviorAgentIaResponse);
+}
+
+message GetBehaviorAgentIaRequest {}
+
+message GetBehaviorAgentIaResponse {
+  map<int32, string> comportamentos = 1;
 }
 
 // Mensagem para CreateAgent
@@ -46,8 +53,9 @@ message UpdateAgentResponse {
 
 // Mensagem para GetAgent
 message GetAgentRequest {
-  string id = 1;
+  uint64 id = 1;
   string uuid_user = 2;
+  bool instructions = 3;
 }
 
 message Agent {
@@ -59,6 +67,7 @@ message Agent {
   string behaviourIa = 6;
   string companyUrl = 7;
   string uuid_user = 8;
+  string instructions = 9;
 }
 
 message GetAgentResponse {

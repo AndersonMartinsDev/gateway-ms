@@ -2,28 +2,49 @@ version: '3.8'
 
 services:
   gateway-ms:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: gateway-ms
-    restart: on-failure
+    image: gateway-ms:latest
+    deploy:
+     mode: replicated
+     replicas: 1
+     placement:
+       constraints:
+         - node.role == manager # Exemplo de restrição de deploy
+    # Configuração de injeção de secrets
+    secrets:
+      - rabbitmq_url
+      - database_user
+      - database_pass
+      - secret_encode_key
+      
     ports:
       - "8080:8080" # Expõe a porta do gateway para o host
     environment:
       APPLICATION_NAME: gateway-ms
       DATABASE_NAME: gtms_database
-      DATABASE_HOST: 146.235.42.19
+      DATABASE_HOST: lead-docker.duckdns.org
       DATABASE_PORT: 5432
-      DATABASE_USER: root
-      DATABASE_PASSWORD: root
-
-      SECRET_KEY: VS_3zaqZyL8pgJSiKqINkNTBcRn88Br7wA2eOLxTwQo
-
+      DATABASE_USER: /run/secrets/database_user
+      DATABASE_PASSWORD: /run/secrets/database_pass
+      ORIGINS: http://lead-docker.duckdns.org:4200
+      SECRET_KEY: /run/secrets/secret_encode_key
+      WHATSAPP_PF_URL: http://lead-docker.duckdns.org:3000
       WEBHOOK_PROCESSOR_MS_URL: webhook-processor-ms:50051
       AGENT_MODEL_MS_URL: agent-model-ms:50052
-      RABBITMQ_URL: amqp://rabbitmq:root@lead-docker.duckdns.org:5672/
+      RABBITMQ_URL_FILE: /run/secrets/rabbitmq_url
     networks:
       - internal-judite
+
 networks:
   internal-judite:
-    driver: bridge
+    driver: overlay     
+    attachable: true
+
+secrets:
+  database_user:
+    external: true 
+  database_pass:
+    external: true
+  secret_encode_key:
+    external: true
+  rabbitmq_url:
+    external: true

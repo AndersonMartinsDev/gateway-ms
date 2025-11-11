@@ -19,11 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AIAgentService_CreateAgent_FullMethodName = "/agent.AIAgentService/CreateAgent"
-	AIAgentService_UpdateAgent_FullMethodName = "/agent.AIAgentService/UpdateAgent"
-	AIAgentService_GetAgent_FullMethodName    = "/agent.AIAgentService/GetAgent"
-	AIAgentService_ListAgents_FullMethodName  = "/agent.AIAgentService/ListAgents"
-	AIAgentService_DeleteAgent_FullMethodName = "/agent.AIAgentService/DeleteAgent"
+	AIAgentService_CreateAgent_FullMethodName        = "/proto.AIAgentService/CreateAgent"
+	AIAgentService_UpdateAgent_FullMethodName        = "/proto.AIAgentService/UpdateAgent"
+	AIAgentService_GetAgent_FullMethodName           = "/proto.AIAgentService/GetAgent"
+	AIAgentService_ListAgents_FullMethodName         = "/proto.AIAgentService/ListAgents"
+	AIAgentService_DeleteAgent_FullMethodName        = "/proto.AIAgentService/DeleteAgent"
+	AIAgentService_GetBehaviorAgentIa_FullMethodName = "/proto.AIAgentService/GetBehaviorAgentIa"
 )
 
 // AIAgentServiceClient is the client API for AIAgentService service.
@@ -35,6 +36,7 @@ type AIAgentServiceClient interface {
 	GetAgent(ctx context.Context, in *GetAgentRequest, opts ...grpc.CallOption) (*GetAgentResponse, error)
 	ListAgents(ctx context.Context, in *ListAgentsRequest, opts ...grpc.CallOption) (*ListAgentsResponse, error)
 	DeleteAgent(ctx context.Context, in *DeleteAgentRequest, opts ...grpc.CallOption) (*DeleteAgentResponse, error)
+	GetBehaviorAgentIa(ctx context.Context, in *GetBehaviorAgentIaRequest, opts ...grpc.CallOption) (*GetBehaviorAgentIaResponse, error)
 }
 
 type aIAgentServiceClient struct {
@@ -95,6 +97,16 @@ func (c *aIAgentServiceClient) DeleteAgent(ctx context.Context, in *DeleteAgentR
 	return out, nil
 }
 
+func (c *aIAgentServiceClient) GetBehaviorAgentIa(ctx context.Context, in *GetBehaviorAgentIaRequest, opts ...grpc.CallOption) (*GetBehaviorAgentIaResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetBehaviorAgentIaResponse)
+	err := c.cc.Invoke(ctx, AIAgentService_GetBehaviorAgentIa_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AIAgentServiceServer is the server API for AIAgentService service.
 // All implementations must embed UnimplementedAIAgentServiceServer
 // for forward compatibility.
@@ -104,6 +116,7 @@ type AIAgentServiceServer interface {
 	GetAgent(context.Context, *GetAgentRequest) (*GetAgentResponse, error)
 	ListAgents(context.Context, *ListAgentsRequest) (*ListAgentsResponse, error)
 	DeleteAgent(context.Context, *DeleteAgentRequest) (*DeleteAgentResponse, error)
+	GetBehaviorAgentIa(context.Context, *GetBehaviorAgentIaRequest) (*GetBehaviorAgentIaResponse, error)
 	mustEmbedUnimplementedAIAgentServiceServer()
 }
 
@@ -128,6 +141,9 @@ func (UnimplementedAIAgentServiceServer) ListAgents(context.Context, *ListAgents
 }
 func (UnimplementedAIAgentServiceServer) DeleteAgent(context.Context, *DeleteAgentRequest) (*DeleteAgentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteAgent not implemented")
+}
+func (UnimplementedAIAgentServiceServer) GetBehaviorAgentIa(context.Context, *GetBehaviorAgentIaRequest) (*GetBehaviorAgentIaResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBehaviorAgentIa not implemented")
 }
 func (UnimplementedAIAgentServiceServer) mustEmbedUnimplementedAIAgentServiceServer() {}
 func (UnimplementedAIAgentServiceServer) testEmbeddedByValue()                        {}
@@ -240,11 +256,29 @@ func _AIAgentService_DeleteAgent_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AIAgentService_GetBehaviorAgentIa_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBehaviorAgentIaRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AIAgentServiceServer).GetBehaviorAgentIa(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AIAgentService_GetBehaviorAgentIa_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AIAgentServiceServer).GetBehaviorAgentIa(ctx, req.(*GetBehaviorAgentIaRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AIAgentService_ServiceDesc is the grpc.ServiceDesc for AIAgentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var AIAgentService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "agent.AIAgentService",
+	ServiceName: "proto.AIAgentService",
 	HandlerType: (*AIAgentServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -266,6 +300,10 @@ var AIAgentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteAgent",
 			Handler:    _AIAgentService_DeleteAgent_Handler,
+		},
+		{
+			MethodName: "GetBehaviorAgentIa",
+			Handler:    _AIAgentService_GetBehaviorAgentIa_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

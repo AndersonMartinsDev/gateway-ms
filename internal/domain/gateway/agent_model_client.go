@@ -16,4 +16,5 @@ type AgentClient interface {
 	GetAgent(ctx context.Context, in *proto.GetAgentRequest, opts ...grpc.CallOption) (*proto.GetAgentResponse, error)
 	ListAgents(ctx context.Context, in *proto.ListAgentsRequest, opts ...grpc.CallOption) (*proto.ListAgentsResponse, error)
 	DeleteAgent(ctx context.Context, in *proto.DeleteAgentRequest, opts ...grpc.CallOption) (*proto.DeleteAgentResponse, error)
+	GetBehaviorAgentIa(ctx context.Context, in *proto.GetBehaviorAgentIaRequest, opts ...grpc.CallOption) (*proto.GetBehaviorAgentIaResponse, error)
 }

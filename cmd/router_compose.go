@@ -3,6 +3,7 @@ package cmd
 import (
 	"gateway-ms/internal/application/handler"
 	"gateway-ms/internal/application/service"
+	"gateway-ms/internal/infrastructure/configuration"
 	"gateway-ms/internal/infrastructure/grpc_client"
 	"gateway-ms/internal/infrastructure/rabbitmq"
 	"log"
@@ -24,7 +25,7 @@ func NewRouterCompose() *RouterCompose {
 		WebhookPrMsURL:  os.Getenv("WEBHOOK_PROCESSOR_MS_URL"),
 		AgentModelMsURL: os.Getenv("AGENT_MODEL_MS_URL"),
 		WhastAppPFUrl:   os.Getenv("WHATSAPP_PF_URL"),
-		RabbitMQURL:     os.Getenv("RABBITMQ_URL"),
+		RabbitMQURL:     configuration.GetSecret("RABBITMQ_URL_FILE"),
 	}
 }
 

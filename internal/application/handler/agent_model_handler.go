@@ -57,7 +57,12 @@ func (handler AgentModelHandler) GetModels(w http.ResponseWriter, r *http.Reques
 }
 
 func (handler AgentModelHandler) GetBehaviorAgentIa(w http.ResponseWriter, r *http.Request) {
-	//
+	behavioural, err := handler.service.GetBehaviorAgentIa(context.Background())
+	if err != nil {
+		response.Erro(w, http.StatusInternalServerError, err)
+		return
+	}
+	response.JSON(w, http.StatusOK, behavioural)
 }
 
 func (handler AgentModelHandler) CreateAgentAI(w http.ResponseWriter, r *http.Request) {

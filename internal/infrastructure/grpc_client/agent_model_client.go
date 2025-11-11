@@ -44,3 +44,8 @@ func (a *AgentModelClient) ListAgents(ctx context.Context, in *proto.ListAgentsR
 func (a *AgentModelClient) UpdateAgent(ctx context.Context, in *proto.UpdateAgentRequest, opts ...grpc.CallOption) (*proto.UpdateAgentResponse, error) {
 	return a.client.UpdateAgent(ctx, in, opts...)
 }
+
+// GetBehaviorAgentIa implements gateway.AgentClient.
+func (a *AgentModelClient) GetBehaviorAgentIa(ctx context.Context, in *proto.GetBehaviorAgentIaRequest, opts ...grpc.CallOption) (*proto.GetBehaviorAgentIaResponse, error) {
+	return a.client.GetBehaviorAgentIa(ctx, in, opts...)
+}
